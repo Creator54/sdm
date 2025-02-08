@@ -9,6 +9,25 @@ git clone https://github.com/creator54/sdm.git
 cd sdm && pip install -e .
 ```
 
+### Using Nix
+
+If you have Nix with flakes enabled, you can run the tool directly:
+
+```bash
+nix run github:creator54/sdm
+
+# Or from local checkout
+nix run .#
+```
+
+To install into your environment:
+```bash
+nix profile install github:creator54/sdm
+
+# Or from local checkout
+nix profile install .#
+```
+
 ## Configure
 
 Using `.env`:
