@@ -107,11 +107,34 @@ class UI:
         help_table.add_column("Command", style="cyan")
         help_table.add_column("Description", style="green")
 
-        help_table.add_row("login", "Login to SigNoz")
-        help_table.add_row("config", "Show current configuration")
-        help_table.add_row("list", "List all dashboards")
-        help_table.add_row("delete <uuid>", "Delete a dashboard")
-        help_table.add_row("add <file>", "Add a new dashboard")
+        # Commands
+        help_table.add_row("[bold]Commands:", "")
+        help_table.add_row("ls", "List all dashboards")
+        help_table.add_row("rm UUID...", "Delete one or more dashboards")
+        help_table.add_row("add FILE...", "Add one or more dashboards")
+        help_table.add_row("cfg", "Show current configuration")
+        
+        # Options
+        help_table.add_row("", "")
+        help_table.add_row("[bold]Options:", "")
+        help_table.add_row("-l, --login", "Login to SigNoz")
+        help_table.add_row("-u, --url", "Custom SigNoz API URL")
+        help_table.add_row("-t, --token", "Authentication token")
+        help_table.add_row("-e, --email", "Email for login")
+        help_table.add_row("-p, --password", "Password for login")
+        help_table.add_row("-y, --yes", "Skip confirmations")
+        help_table.add_row("-f, --force", "Same as --yes")
+        help_table.add_row("-s, --skip-errors", "Continue on errors (add command)")
+        help_table.add_row("-v, --version", "Show version")
+
+        # Examples
+        help_table.add_row("", "")
+        help_table.add_row("[bold]Examples:", "")
+        help_table.add_row("signoz -l -e user@email.com", "Login with email")
+        help_table.add_row("signoz ls", "List all dashboards")
+        help_table.add_row("signoz rm UUID1 UUID2 -y", "Delete multiple dashboards")
+        help_table.add_row("signoz add dashboard.json -y", "Add a dashboard")
+        help_table.add_row("signoz cfg", "Show configuration")
 
         panel = Panel(
             help_table,
