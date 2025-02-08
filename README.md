@@ -39,7 +39,11 @@ SIGNOZ_URL=http://localhost:3301
 
 Or CLI:
 ```bash
+# Using default URL (http://localhost:3301)
 sdm -l -e your.email@example.com -p your_password
+
+# Using custom URL
+sdm -l -e your.email@example.com -p your_password -u http://your.signoz.url:3301
 ```
 
 ## Usage
