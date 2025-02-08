@@ -48,15 +48,54 @@ class Commands:
             sys.exit(1)
 
     @staticmethod
-    def delete_dashboards(api: SignozAPI, uuids: List[str], force: bool = False) -> None:
+    def delete_dashboards(api: SignozAPI, identifiers: List[str], force: bool = False, by_title: bool = False) -> None:
         """Handle delete command for multiple dashboards"""
         try:
-            # Remove duplicate UUIDs while preserving order
-            unique_uuids = list(dict.fromkeys(uuids))
-            if len(unique_uuids) < len(uuids):
-                UI.print_warning(f"Found {len(uuids) - len(unique_uuids)} duplicate dashboard UUIDs. Will process only unique UUIDs.")
+            # First, get all dashboards to match against titles if needed
+            all_dashboards = api.list_dashboards() if by_title else []
             
+            # Collect UUIDs to delete
+            uuids_to_delete = []
+            if by_title:
+                import re
+                for pattern in identifiers:
+                    try:
+                        regex = re.compile(pattern, re.IGNORECASE)
+                        matches = [
+                            dashboard['uuid'] for dashboard in all_dashboards
+                            if regex.search(dashboard.get('data', {}).get('title', ''))
+                        ]
+                        if matches:
+                            uuids_to_delete.extend(matches)
+                        else:
+                            UI.print_warning(f"No dashboards found matching pattern: {pattern}")
+                    except re.error as e:
+                        UI.print_error(f"Invalid regex pattern '{pattern}': {str(e)}")
+                        if not force:
+                            return
+            else:
+                uuids_to_delete = identifiers
+
+            # Remove duplicate UUIDs while preserving order
+            unique_uuids = list(dict.fromkeys(uuids_to_delete))
+            if len(unique_uuids) < len(uuids_to_delete):
+                UI.print_warning(f"Found {len(uuids_to_delete) - len(unique_uuids)} duplicate dashboard UUIDs. Will process only unique UUIDs.")
+            
+            if not unique_uuids:
+                UI.print_warning("No dashboards found to delete")
+                return
+
             total = len(unique_uuids)
+            
+            # Show matched dashboards before deletion
+            if by_title and not force:
+                UI.print_info("Matched dashboards to delete:")
+                matched_dashboards = [
+                    dashboard for dashboard in all_dashboards
+                    if dashboard['uuid'] in unique_uuids
+                ]
+                for dashboard in matched_dashboards:
+                    UI.print_info(f"  - {dashboard.get('data', {}).get('title', 'Untitled')} ({dashboard['uuid']})")
             
             # Single confirmation if not force mode
             if not force:
