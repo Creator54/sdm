@@ -72,35 +72,19 @@ sdm rm -a                   # Remove all dashboards
 ### Advanced Examples
 ```bash
 # Batch operations
-sdm add dash1.json dash2.json -s -y    # Add multiple, skip errors
-sdm rm UUID1 UUID2 -y                  # Remove multiple
-sdm rm -T "Host.*|CPU.*" -y            # Remove by pattern
-sdm rm -a -y                           # Remove all without confirmation
+sdm add dash1.json dash2.json -s -y      # Add multiple, skip errors
+sdm rm UUID1 UUID2 -y                    # Remove multiple
+sdm rm -T "Host.*|CPU.*" -y              # Remove by pattern
+sdm rm -a -y                             # Remove all without confirmation
 
-# Remote dashboards
-sdm add                                # Interactive dashboard selection
-sdm add https://github.com/.../dash.json
+# Add dashboards
+sdm add                                  # Interactive dashboard selection
+sdm add https://github.com/.../dash.json # Add dashboard from URL or local file
 
 # Pattern matching
-sdm rm -T ".*Performance.*"            # Remove matching dashboards
-sdm rm -T "Test.*|Dev.*"               # Remove multiple patterns
-
-# Dashboard Selection
-sdm add                                # Show all available dashboards
-sdm add                                # Select single: Enter number (e.g., '1')
-sdm add                                # Select multiple: Comma-separated (e.g., '1,3,5')
-sdm add                                # Select range: Start-end (e.g., '1-3')
+sdm rm -T ".*Performance.*"              # Remove matching dashboards
+sdm rm -T "Test.*|Dev.*"                 # Remove multiple patterns
 ```
-
-## Features
-
-- 🔐 JWT authentication
-- 📊 Dashboard management
-- 🔍 Regex pattern matching
-- 🚀 Batch operations
-- ⚡ Progress tracking
-- 🎨 Rich CLI interface
-- 📚 Browse SigNoz/dashboards repository
 
 ## License
 
