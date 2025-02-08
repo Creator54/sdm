@@ -29,7 +29,8 @@ sdm -l -e your.email@example.com -p your_password
 ```bash
 sdm ls                      # List dashboards
 sdm cfg                     # Show config
-sdm add dash.json           # Add dashboard
+sdm add                     # Browse & select dashboards from SigNoz/dashboards
+sdm add dash.json           # Add specific dashboard
 sdm rm UUID                 # Remove by UUID
 sdm rm -T "CPU.*"           # Remove by title pattern
 ```
@@ -55,11 +56,18 @@ sdm rm UUID1 UUID2 -y                  # Remove multiple
 sdm rm -T "Host.*|CPU.*" -y            # Remove by pattern
 
 # Remote dashboards
+sdm add                                # Interactive dashboard selection
 sdm add https://github.com/.../dash.json
 
 # Pattern matching
 sdm rm -T ".*Performance.*"            # Remove matching dashboards
 sdm rm -T "Test.*|Dev.*"               # Remove multiple patterns
+
+# Dashboard Selection
+sdm add                                # Show all available dashboards
+sdm add                                # Select single: Enter number (e.g., '1')
+sdm add                                # Select multiple: Comma-separated (e.g., '1,3,5')
+sdm add                                # Select range: Start-end (e.g., '1-3')
 ```
 
 ## Features
@@ -70,6 +78,7 @@ sdm rm -T "Test.*|Dev.*"               # Remove multiple patterns
 - 🚀 Batch operations
 - ⚡ Progress tracking
 - 🎨 Rich CLI interface
+- 📚 Browse SigNoz/dashboards repository
 
 ## License
 

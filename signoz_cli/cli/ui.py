@@ -142,4 +142,44 @@ class UI:
             title="[bold cyan]sdm - SigNoz Dashboard Manager",
             border_style="blue"
         )
-        console.print(panel) 
+        console.print(panel)
+
+    @staticmethod
+    def display_available_dashboards(dashboards: List[Dict]) -> None:
+        """Display available dashboards from SigNoz/dashboards repository"""
+        if not dashboards:
+            UI.print_info("No dashboards available")
+            return
+
+        # Group dashboards by category
+        by_category = {}
+        for dash in dashboards:
+            category = dash['category']
+            if category not in by_category:
+                by_category[category] = []
+            by_category[category].append(dash)
+
+        # Create main table
+        table = Table(title="Available Dashboards", show_header=True, header_style=TITLE_STYLE)
+        table.add_column("#", style="cyan", justify="right")
+        table.add_column("Category", style="yellow")
+        table.add_column("Dashboard", style="green")
+        
+        index = 1
+        for category in sorted(by_category.keys()):
+            for dash in by_category[category]:
+                path = dash['path'].split('/')[-1] if '/' in dash['path'] else dash['path']
+                table.add_row(str(index), category, path)
+                index += 1
+        
+        console.print(table)
+        console.print("\n[bold cyan]Selection Options:[/]")
+        console.print("  • Single dashboard: Enter the number (e.g., '1')")
+        console.print("  • Multiple dashboards: Comma-separated numbers (e.g., '1,3,5')")
+        console.print("  • Range of dashboards: Start-end numbers (e.g., '1-3')")
+        console.print("  • Press Enter to cancel\n")
+
+    @staticmethod
+    def prompt_dashboard_selection() -> str:
+        """Prompt user to select dashboards"""
+        return Prompt.ask("\nEnter dashboard number(s)", default="") 

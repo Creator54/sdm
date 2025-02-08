@@ -1,13 +1,16 @@
 import json
 import sys
-from typing import Optional, List
+from typing import Optional, List, Dict
 import requests
 from urllib.parse import urlparse
+import re
 
 from ..api.client import SignozAPI
 from ..config.auth import TokenManager
 from ..config.settings import CONFIG_FILE
 from .ui import UI
+
+SIGNOZ_DASHBOARDS_API = "https://api.github.com/repos/SigNoz/dashboards/git/trees/main?recursive=1"
 
 class Commands:
     @staticmethod
@@ -57,7 +60,6 @@ class Commands:
             # Collect UUIDs to delete
             uuids_to_delete = []
             if by_title:
-                import re
                 for pattern in identifiers:
                     try:
                         regex = re.compile(pattern, re.IGNORECASE)
@@ -169,9 +171,127 @@ class Commands:
             raise Exception(f"Invalid JSON in dashboard file: {file_path}")
 
     @staticmethod
+    def _fetch_available_dashboards() -> List[Dict]:
+        """Fetch all available dashboards from SigNoz/dashboards repository"""
+        try:
+            response = requests.get(SIGNOZ_DASHBOARDS_API, timeout=10)  # Add timeout
+            response.raise_for_status()
+            data = response.json()
+            
+            # Filter only JSON files and organize by category
+            dashboards = []
+            for item in data.get('tree', []):
+                if item['path'].endswith('.json'):
+                    # Extract category from path
+                    path_parts = item['path'].split('/')
+                    category = path_parts[0] if len(path_parts) > 1 else 'Other'
+                    dashboards.append({
+                        'path': item['path'],
+                        'category': category,
+                        'url': f"https://raw.githubusercontent.com/SigNoz/dashboards/main/{item['path']}"
+                    })
+            
+            # Sort by category and path
+            dashboards.sort(key=lambda x: (x['category'], x['path']))
+            return dashboards
+        except requests.exceptions.Timeout:
+            UI.print_error("Timeout while fetching dashboards. Please check your internet connection.")
+            return []
+        except requests.exceptions.RequestException as e:
+            UI.print_error(f"Failed to fetch available dashboards: {str(e)}")
+            return []
+        except Exception as e:
+            UI.print_error(f"Unexpected error while fetching dashboards: {str(e)}")
+            return []
+
+    @staticmethod
+    def _select_dashboards(dashboards: List[Dict], pattern: Optional[str] = None) -> List[Dict]:
+        """Allow user to select dashboards interactively"""
+        if not dashboards:
+            return []
+
+        # If pattern is provided, filter dashboards
+        if pattern:
+            try:
+                regex = re.compile(pattern, re.IGNORECASE)
+                filtered = [d for d in dashboards if regex.search(d['path'])]
+                if not filtered:
+                    UI.print_warning(f"No dashboards found matching pattern: {pattern}")
+                    return []
+                return filtered
+            except re.error as e:
+                UI.print_error(f"Invalid regex pattern '{pattern}': {str(e)}")
+                return []
+
+        # Display available dashboards
+        UI.display_available_dashboards(dashboards)
+        
+        # Get user selection
+        selection = UI.prompt_dashboard_selection()
+        if not selection:
+            return []
+
+        try:
+            selected = []
+            # Handle range selection (e.g., "1-3")
+            if '-' in selection:
+                start, end = map(int, selection.split('-'))
+                if start < 1 or end > len(dashboards) or start > end:
+                    UI.print_error(f"Invalid range: {start}-{end}. Please use numbers between 1 and {len(dashboards)}")
+                    return []
+                selected = dashboards[start-1:end]
+            # Handle multiple selection (e.g., "1,3,5")
+            elif ',' in selection:
+                indices = [int(i)-1 for i in selection.split(',')]
+                invalid = [i+1 for i in indices if i < 0 or i >= len(dashboards)]
+                if invalid:
+                    UI.print_error(f"Invalid selection(s): {', '.join(map(str, invalid))}. Please use numbers between 1 and {len(dashboards)}")
+                    return []
+                selected = [dashboards[i] for i in indices]
+            # Handle single selection
+            else:
+                try:
+                    index = int(selection) - 1
+                    if 0 <= index < len(dashboards):
+                        selected = [dashboards[index]]
+                    else:
+                        UI.print_error(f"Invalid selection: {selection}. Please use a number between 1 and {len(dashboards)}")
+                        return []
+                except ValueError:
+                    UI.print_error(f"Invalid input: '{selection}'. Please enter numbers only")
+                    return []
+            
+            # Show selected dashboards before proceeding
+            if selected:
+                UI.print_info("\nSelected dashboards:")
+                for dash in selected:
+                    UI.print_info(f"  - {dash['path']}")
+            return selected
+        except ValueError:
+            UI.print_error("Invalid selection format. Please use numbers only")
+            return []
+        except Exception as e:
+            UI.print_error(f"Error processing selection: {str(e)}")
+            return []
+
+    @staticmethod
     def add_dashboards(api: SignozAPI, file_paths: List[str], skip_errors: bool = False, force: bool = False) -> None:
         """Handle add command for multiple dashboards"""
         try:
+            # If no file paths provided, show available dashboards
+            if not file_paths:
+                dashboards = Commands._fetch_available_dashboards()
+                if not dashboards:
+                    UI.print_error("No dashboards available")
+                    return
+                
+                selected = Commands._select_dashboards(dashboards)
+                if not selected:
+                    UI.print_info("No dashboards selected")
+                    return
+                
+                file_paths = [d['url'] for d in selected]
+            
             total = len(file_paths)
             
             # Single confirmation if not force mode

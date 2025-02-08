@@ -84,9 +84,6 @@ def main():
             Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title)
             return
         elif args.command == 'add':
-            if not args.args:
-                UI.print_error("Please provide at least one dashboard file to add")
-                sys.exit(1)
             api = SignozAPI(args.url, args.token)
             if not api.token:
                 UI.print_error("No token found. Please login first or provide a token.")
