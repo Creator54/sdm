@@ -46,17 +46,20 @@ class UI:
             return
 
         table = Table(title="Available Dashboards", show_header=True, header_style=TITLE_STYLE)
-        table.add_column("UUID", style="cyan")
+        table.add_column("UUID", style="cyan", no_wrap=True)
         table.add_column("Title", style="green")
         table.add_column("Created By", style="blue")
+        table.add_column("Created At", style="yellow")
 
         for dashboard in dashboards:
             uuid = dashboard.get('uuid', 'N/A')
             title = dashboard.get('data', {}).get('title', 'Untitled')
             created_by = dashboard.get('created_by', 'Unknown')
-            table.add_row(uuid, title, created_by)
+            created_at = dashboard.get('created_at', 'Unknown')
+            table.add_row(str(uuid), title, created_by, created_at)
 
         console.print(table)
+        console.print("\n[bold cyan]Note:[/] Use UUID or Title pattern for operations (e.g., sdm rm UUID or sdm rm -T 'Title Pattern')")
 
     @staticmethod
     def display_config(config: Dict[str, Any]) -> None:

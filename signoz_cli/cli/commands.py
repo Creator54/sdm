@@ -335,7 +335,8 @@ class Commands:
                         progress.update(task_id, description=f"Uploading dashboard from {file_path} ({i}/{total})")
                         uuid = api.add_dashboard(dashboard_data)
                         success_count += 1
-                        UI.print_success(f"Added dashboard from {file_path} (UUID: {uuid})")
+                        title = dashboard_data.get('data', {}).get('title', 'Untitled')
+                        UI.print_success(f"Added dashboard: {title} (UUID: {uuid})")
                     except Exception as e:
                         UI.print_error(f"Failed to add dashboard from {file_path}: {str(e)}")
                         failed_paths.append(file_path)

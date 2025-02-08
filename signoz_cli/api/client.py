@@ -118,7 +118,9 @@ class SignozAPI:
             )
             data = self._handle_response(response, "Error adding dashboard")
             if data.get('status') == 'success' and 'data' in data:
-                return str(data['data'].get('id', 'Unknown'))
+                # Extract UUID from the response data
+                uuid = data['data'].get('uuid', data['data'].get('id', 'Unknown'))
+                return str(uuid)
             raise Exception("Invalid response format from server")
         except Exception as e:
             raise Exception(f"Failed to add dashboard: {str(e)}") 
