@@ -130,16 +130,16 @@ class UI:
         # Examples
         help_table.add_row("", "")
         help_table.add_row("[bold]Examples:", "")
-        help_table.add_row("signoz -l -e user@email.com", "Login with email")
-        help_table.add_row("signoz ls", "List all dashboards")
-        help_table.add_row("signoz rm UUID1 UUID2 -y", "Delete multiple dashboards without confirmation")
-        help_table.add_row("signoz rm -T 'CPU.*' -y", "Delete matching dashboards without confirmation")
-        help_table.add_row("signoz add dashboard.json -y", "Add a dashboard without confirmation")
-        help_table.add_row("signoz cfg", "Show configuration")
+        help_table.add_row("sdm -l -e user@email.com", "Login with email")
+        help_table.add_row("sdm ls", "List all dashboards")
+        help_table.add_row("sdm rm UUID1 UUID2 -y", "Delete multiple dashboards without confirmation")
+        help_table.add_row("sdm rm -T 'CPU.*' -y", "Delete matching dashboards without confirmation")
+        help_table.add_row("sdm add dashboard.json -y", "Add a dashboard without confirmation")
+        help_table.add_row("sdm cfg", "Show configuration")
 
         panel = Panel(
             help_table,
-            title="[bold cyan]SigNoz Dashboard CLI Help",
+            title="[bold cyan]sdm - SigNoz Dashboard Manager",
             border_style="blue"
         )
         console.print(panel) 

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="signoz-cli",
+    name="sdm",
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -12,15 +12,15 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'signoz=signoz_cli.__main__:main',
+            'sdm=signoz_cli.__main__:main',
         ],
     },
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="A command-line tool for managing SigNoz dashboards",
+    author="Creator54",
+    author_email="creator54@github.com",
+    description="A minimal CLI tool for managing SigNoz dashboards",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/signoz-cli",
+    url="https://github.com/creator54/sdm",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

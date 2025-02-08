@@ -1,165 +1,76 @@
-# SigNoz Dashboard CLI
+# SigNoz Dashboard Manager (sdm)
 
-A powerful command-line interface for managing SigNoz dashboards. This tool allows you to easily manage your SigNoz dashboards through the command line, supporting operations like listing, adding, and deleting dashboards.
+A minimal CLI tool for managing SigNoz dashboards.
 
-## Features
+## Install
 
-- 🔐 Secure authentication with JWT tokens
-- 📊 List all available dashboards
-- ➕ Add dashboards from local JSON files or URLs (including GitHub)
-- 🗑️ Delete single or multiple dashboards
-- 🔄 Batch operations support
-- ⚡ Progress tracking for long operations
-- 🎨 Beautiful CLI interface with rich formatting
-- 🐧 Unix-style command flags
-
-## Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/signoz-cli.git
-cd signoz-cli
+git clone https://github.com/creator54/sdm.git
+cd sdm && pip install -e .
 ```
 
-2. Install the package:
-```bash
-pip install -e .
-```
+## Configure
 
-## Configuration
-
-You can configure the CLI in two ways:
-
-1. Using environment variables in a `.env` file:
+Using `.env`:
 ```bash
 SIGNOZ_EMAIL=your.email@example.com
 SIGNOZ_PASSWORD=your_password
 SIGNOZ_URL=http://localhost:3301
 ```
 
-2. Using command-line arguments:
+Or CLI:
 ```bash
-signoz -l -e your.email@example.com -p your_password
+sdm -l -e your.email@example.com -p your_password
 ```
 
 ## Usage
 
-### Commands
-
-The CLI uses Unix-style commands for all operations:
-
-| Command | Description | Example |
-|---------|-------------|---------|
-| `ls` | List all dashboards | `signoz ls` |
-| `rm` | Remove one or more dashboards | `signoz rm UUID1 UUID2` |
-| `add` | Add one or more dashboards | `signoz add dash1.json dash2.json` |
-| `cfg` | Show current configuration | `signoz cfg` |
-
-### Global Options
-
-| Flag | Long Form | Description |
-|------|-----------|-------------|
-| `-l` | `--login` | Login to SigNoz |
-| `-u` | `--url` | Custom SigNoz API URL |
-| `-t` | `--token` | Authentication token |
-| `-e` | `--email` | Email for login |
-| `-p` | `--password` | Password for login |
-| `-y` | `--yes` | Skip all confirmation prompts |
-| `-s` | `--skip-errors` | Continue on errors (for add command) |
-| `-T` | `--title` | Use regex pattern matching on dashboard titles (for rm command) |
-| `-v` | `--version` | Show version |
-
-### Examples
-
-1. Authentication:
+### Basic Commands
 ```bash
-# Login with email/password
-signoz -l -e user@example.com -p password
-
-# Login using .env file
-signoz -l
-
-# Use custom API URL
-signoz -l -u http://custom.signoz.url:3301
+sdm ls                      # List dashboards
+sdm cfg                     # Show config
+sdm add dash.json           # Add dashboard
+sdm rm UUID                 # Remove by UUID
+sdm rm -T "CPU.*"           # Remove by title pattern
 ```
 
-2. Managing Dashboards:
+### Options
+| Flag | Description |
+|------|-------------|
+| `-l` | Login to SigNoz |
+| `-u` | Custom API URL |
+| `-t` | Auth token |
+| `-e` | Email for login |
+| `-p` | Password |
+| `-y` | Skip confirmations |
+| `-s` | Continue on errors (add) |
+| `-T` | Use regex pattern matching |
+| `-v` | Show version |
+
+### Advanced Examples
 ```bash
-# List all dashboards
-signoz ls
+# Batch operations
+sdm add dash1.json dash2.json -s -y    # Add multiple, skip errors
+sdm rm UUID1 UUID2 -y                  # Remove multiple
+sdm rm -T "Host.*|CPU.*" -y            # Remove by pattern
 
-# Remove dashboards
-signoz rm UUID1 UUID2         # Remove multiple dashboards by UUID
-signoz rm UUID1 -y            # Remove without confirmation
-signoz rm -T "Host.*"         # Remove dashboards with titles matching regex pattern
-signoz rm -T "CPU|Memory"     # Remove dashboards with titles containing CPU or Memory
-signoz rm -T ".*" -y          # Remove all dashboards without confirmation
+# Remote dashboards
+sdm add https://github.com/.../dash.json
 
-# Add dashboards
-signoz add dashboard.json                     # Add single dashboard
-signoz add dash1.json dash2.json             # Add multiple dashboards
-signoz add dash1.json dash2.json -s          # Continue on errors
-signoz add dashboard.json -y                  # Add without confirmation
-signoz add https://github.com/.../dash.json  # Add from URL
+# Pattern matching
+sdm rm -T ".*Performance.*"            # Remove matching dashboards
+sdm rm -T "Test.*|Dev.*"               # Remove multiple patterns
 ```
 
-3. Configuration:
-```bash
-# Show current config
-signoz cfg
+## Features
 
-# Use with custom token
-signoz ls -t your_token
-```
-
-### Common Workflows
-
-1. First-time setup:
-```bash
-# Set up configuration
-signoz -l -e your.email@example.com -p your_password
-
-# Verify configuration
-signoz cfg
-
-# List dashboards
-signoz ls
-```
-
-2. Batch operations:
-```bash
-# Add multiple dashboards with error skipping
-signoz add dash1.json dash2.json dash3.json -s -y
-
-# Remove multiple dashboards without confirmation
-signoz rm UUID1 UUID2 UUID3 -f
-```
-
-## Error Handling
-
-The CLI provides clear error messages for common scenarios:
-
-- Authentication failures
-- Invalid dashboard JSON
-- Network connectivity issues
-- API errors
-- File not found errors
-
-## Security
-
-- Credentials are never stored in plain text
-- JWT tokens are stored securely with appropriate file permissions
-- HTTPS is used for all API communications
-- Sensitive information is masked in logs and output
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+- 🔐 JWT authentication
+- 📊 Dashboard management
+- 🔍 Regex pattern matching
+- 🚀 Batch operations
+- ⚡ Progress tracking
+- 🎨 Rich CLI interface
 
 ## License
 
-MIT License 
+MIT 
