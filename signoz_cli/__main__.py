@@ -85,7 +85,7 @@ def main():
             if not api.token:
                 UI.print_error("No token found. Please login first or provide a token.")
                 sys.exit(1)
-            Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title, remove_all=args.all)
+            Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title, remove_all=args.all, skip_errors=args.skip_errors)
             return
         elif args.command == 'add':
             api = SignozAPI(args.url, args.token)

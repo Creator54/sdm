@@ -51,7 +51,7 @@ class Commands:
             sys.exit(1)
 
     @staticmethod
-    def delete_dashboards(api: SignozAPI, identifiers: List[str], force: bool = False, by_title: bool = False, remove_all: bool = False) -> None:
+    def delete_dashboards(api: SignozAPI, identifiers: List[str], force: bool = False, by_title: bool = False, remove_all: bool = False, skip_errors: bool = False) -> None:
         """Handle delete command for multiple dashboards"""
         try:
             # First, get all dashboards
@@ -135,6 +135,8 @@ class Commands:
                     except Exception as e:
                         UI.print_error(f"Failed to delete dashboard {uuid}: {str(e)}")
                         failed_uuids.append(uuid)
+                        if not skip_errors:
+                            raise
                     progress.update(task_id, advance=1)
 
             # Summary

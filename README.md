@@ -64,7 +64,7 @@ sdm rm -a                   # Remove all dashboards
 | `-e` | Email for login |
 | `-p` | Password |
 | `-y` | Skip confirmations |
-| `-s` | Continue on errors (add) |
+| `-s` | Continue on errors (for add and remove commands) |
 | `-T` | Use glob pattern matching on titles (e.g., "*Metrics*", "JVM*") |
 | `-a` | Remove all dashboards |
 | `-v` | Show version |
@@ -73,8 +73,8 @@ sdm rm -a                   # Remove all dashboards
 ```bash
 # Batch operations
 sdm add dash1.json dash2.json -s -y      # Add multiple, skip errors
-sdm rm UUID1 UUID2 -y                    # Remove multiple
-sdm rm -T "*Host*|*CPU*" -y              # Remove by pattern
+sdm rm UUID1 UUID2 -y -s                 # Remove multiple, continue on errors
+sdm rm -T "*Host*|*CPU*" -y -s           # Remove by pattern, continue on errors
 sdm rm -a -y                             # Remove all without confirmation
 
 # Add dashboards
