@@ -28,7 +28,6 @@ def main():
                       help=f'SigNoz API URL (default: from SIGNOZ_URL or {DEFAULT_API_URL})')
     parser.add_argument('--token', '-t', help='Authentication token (optional if logged in)')
     parser.add_argument('--yes', '-y', action='store_true', help='Skip all confirmation prompts')
-    parser.add_argument('--force', '-f', action='store_true', help='Same as --yes')
     parser.add_argument('--skip-errors', '-s', action='store_true', help='Continue on error when adding multiple dashboards')
     parser.add_argument('--version', '-v', action='version', 
                       version=f'%(prog)s {__import__("signoz_cli").__version__}',
@@ -82,7 +81,7 @@ def main():
             if not api.token:
                 UI.print_error("No token found. Please login first or provide a token.")
                 sys.exit(1)
-            Commands.delete_dashboards(api, args.args, force=args.yes or args.force, by_title=args.title)
+            Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title)
             return
         elif args.command == 'add':
             if not args.args:

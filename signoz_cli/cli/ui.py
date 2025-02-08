@@ -122,8 +122,7 @@ class UI:
         help_table.add_row("-t, --token", "Authentication token")
         help_table.add_row("-e, --email", "Email for login")
         help_table.add_row("-p, --password", "Password for login")
-        help_table.add_row("-y, --yes", "Skip confirmations")
-        help_table.add_row("-f, --force", "Same as --yes")
+        help_table.add_row("-y, --yes", "Skip all confirmation prompts")
         help_table.add_row("-s, --skip-errors", "Continue on errors (add command)")
         help_table.add_row("-T, --title", "Use regex pattern matching on dashboard titles")
         help_table.add_row("-v, --version", "Show version")
@@ -133,9 +132,9 @@ class UI:
         help_table.add_row("[bold]Examples:", "")
         help_table.add_row("signoz -l -e user@email.com", "Login with email")
         help_table.add_row("signoz ls", "List all dashboards")
-        help_table.add_row("signoz rm UUID1 UUID2 -y", "Delete multiple dashboards by UUID")
-        help_table.add_row("signoz rm -T 'CPU.*' -y", "Delete dashboards with titles matching pattern")
-        help_table.add_row("signoz add dashboard.json -y", "Add a dashboard")
+        help_table.add_row("signoz rm UUID1 UUID2 -y", "Delete multiple dashboards without confirmation")
+        help_table.add_row("signoz rm -T 'CPU.*' -y", "Delete matching dashboards without confirmation")
+        help_table.add_row("signoz add dashboard.json -y", "Add a dashboard without confirmation")
         help_table.add_row("signoz cfg", "Show configuration")
 
         panel = Panel(

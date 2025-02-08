@@ -64,8 +64,7 @@ The CLI uses Unix-style commands for all operations:
 | `-t` | `--token` | Authentication token |
 | `-e` | `--email` | Email for login |
 | `-p` | `--password` | Password for login |
-| `-y` | `--yes` | Skip confirmations |
-| `-f` | `--force` | Same as --yes |
+| `-y` | `--yes` | Skip all confirmation prompts |
 | `-s` | `--skip-errors` | Continue on errors (for add command) |
 | `-T` | `--title` | Use regex pattern matching on dashboard titles (for rm command) |
 | `-v` | `--version` | Show version |
@@ -92,10 +91,9 @@ signoz ls
 # Remove dashboards
 signoz rm UUID1 UUID2         # Remove multiple dashboards by UUID
 signoz rm UUID1 -y            # Remove without confirmation
-signoz rm UUID1 UUID2 -f      # Force remove
 signoz rm -T "Host.*"         # Remove dashboards with titles matching regex pattern
 signoz rm -T "CPU|Memory"     # Remove dashboards with titles containing CPU or Memory
-signoz rm -T ".*" -f          # Remove all dashboards (force)
+signoz rm -T ".*" -y          # Remove all dashboards without confirmation
 
 # Add dashboards
 signoz add dashboard.json                     # Add single dashboard
