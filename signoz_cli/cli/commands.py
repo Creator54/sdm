@@ -51,15 +51,19 @@ class Commands:
             sys.exit(1)
 
     @staticmethod
-    def delete_dashboards(api: SignozAPI, identifiers: List[str], force: bool = False, by_title: bool = False) -> None:
+    def delete_dashboards(api: SignozAPI, identifiers: List[str], force: bool = False, by_title: bool = False, remove_all: bool = False) -> None:
         """Handle delete command for multiple dashboards"""
         try:
-            # First, get all dashboards to match against titles if needed
-            all_dashboards = api.list_dashboards() if by_title else []
+            # First, get all dashboards
+            all_dashboards = api.list_dashboards()
             
             # Collect UUIDs to delete
             uuids_to_delete = []
-            if by_title:
+            
+            if remove_all:
+                # Get all dashboard UUIDs
+                uuids_to_delete = [d['uuid'] for d in all_dashboards]
+            elif by_title:
                 for pattern in identifiers:
                     try:
                         regex = re.compile(pattern, re.IGNORECASE)
@@ -90,8 +94,8 @@ class Commands:
             total = len(unique_uuids)
             
             # Show matched dashboards before deletion
-            if by_title and not force:
-                UI.print_info("Matched dashboards to delete:")
+            if (by_title or remove_all) and not force:
+                UI.print_info("Dashboards to delete:")
                 matched_dashboards = [
                     dashboard for dashboard in all_dashboards
                     if dashboard['uuid'] in unique_uuids
@@ -99,8 +103,15 @@ class Commands:
                 for dashboard in matched_dashboards:
                     UI.print_info(f"  - {dashboard.get('data', {}).get('title', 'Untitled')} ({dashboard['uuid']})")
             
+            # Extra confirmation for removing all dashboards
+            if remove_all and not force:
+                UI.print_warning(f"\nYou are about to remove ALL {total} dashboards!")
+                UI.print_warning("This action cannot be undone.")
+                if not UI.confirm_action("Are you absolutely sure?"):
+                    UI.print_info("Operation cancelled")
+                    return
             # Single confirmation if not force mode
-            if not force:
+            elif not force:
                 message = f"Are you sure you want to delete {total} dashboard{'s' if total > 1 else ''}?"
                 if not UI.confirm_action(message):
                     UI.print_info("Operation cancelled")

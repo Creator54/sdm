@@ -33,6 +33,7 @@ sdm add                     # Browse & select dashboards from SigNoz/dashboards
 sdm add dash.json           # Add specific dashboard
 sdm rm UUID                 # Remove by UUID
 sdm rm -T "CPU.*"           # Remove by title pattern
+sdm rm -a                   # Remove all dashboards
 ```
 
 ### Options
@@ -46,6 +47,7 @@ sdm rm -T "CPU.*"           # Remove by title pattern
 | `-y` | Skip confirmations |
 | `-s` | Continue on errors (add) |
 | `-T` | Use regex pattern matching |
+| `-a` | Remove all dashboards |
 | `-v` | Show version |
 
 ### Advanced Examples
@@ -54,6 +56,7 @@ sdm rm -T "CPU.*"           # Remove by title pattern
 sdm add dash1.json dash2.json -s -y    # Add multiple, skip errors
 sdm rm UUID1 UUID2 -y                  # Remove multiple
 sdm rm -T "Host.*|CPU.*" -y            # Remove by pattern
+sdm rm -a -y                           # Remove all without confirmation
 
 # Remote dashboards
 sdm add                                # Interactive dashboard selection

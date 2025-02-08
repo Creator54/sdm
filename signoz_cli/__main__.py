@@ -49,6 +49,10 @@ def main():
     parser.add_argument('--title', '-T', action='store_true',
                       help='Use regex pattern matching on dashboard titles (for rm command)')
     
+    # Add remove all option
+    parser.add_argument('--all', '-a', action='store_true',
+                      help='Remove all dashboards (for rm command)')
+    
     args = parser.parse_args()
     
     try:
@@ -70,18 +74,18 @@ def main():
             Commands.list_dashboards(api)
             return
         elif args.command == 'rm':
-            if not args.args:
-                UI.print_error("Please provide at least one dashboard UUID or title pattern to remove")
+            if not args.args and not args.all:
+                UI.print_error("Please provide at least one dashboard UUID/pattern or use --all to remove all dashboards")
                 if args.title:
                     UI.print_info("Use -T/--title with regex patterns to match dashboard titles (e.g., 'CPU.*', 'Host.*')")
                 else:
-                    UI.print_info("Use dashboard UUIDs or -T/--title flag for pattern matching")
+                    UI.print_info("Use dashboard UUIDs, -T/--title for pattern matching, or -a/--all to remove all")
                 sys.exit(1)
             api = SignozAPI(args.url, args.token)
             if not api.token:
                 UI.print_error("No token found. Please login first or provide a token.")
                 sys.exit(1)
-            Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title)
+            Commands.delete_dashboards(api, args.args, force=args.yes, by_title=args.title, remove_all=args.all)
             return
         elif args.command == 'add':
             api = SignozAPI(args.url, args.token)
