@@ -51,7 +51,7 @@ sdm cfg                     # Show config
 sdm add                     # Browse & select dashboards from SigNoz/dashboards
 sdm add dash.json           # Add specific dashboard
 sdm rm UUID                 # Remove by UUID
-sdm rm -T "CPU.*"           # Remove by title pattern
+sdm rm -T "*Metrics*"       # Remove by title pattern (glob-style)
 sdm rm -a                   # Remove all dashboards
 ```
 
@@ -65,7 +65,7 @@ sdm rm -a                   # Remove all dashboards
 | `-p` | Password |
 | `-y` | Skip confirmations |
 | `-s` | Continue on errors (add) |
-| `-T` | Use regex pattern matching |
+| `-T` | Use glob pattern matching on titles (e.g., "*Metrics*", "JVM*") |
 | `-a` | Remove all dashboards |
 | `-v` | Show version |
 
@@ -74,7 +74,7 @@ sdm rm -a                   # Remove all dashboards
 # Batch operations
 sdm add dash1.json dash2.json -s -y      # Add multiple, skip errors
 sdm rm UUID1 UUID2 -y                    # Remove multiple
-sdm rm -T "Host.*|CPU.*" -y              # Remove by pattern
+sdm rm -T "*Host*|*CPU*" -y              # Remove by pattern
 sdm rm -a -y                             # Remove all without confirmation
 
 # Add dashboards
@@ -82,8 +82,8 @@ sdm add                                  # Interactive dashboard selection
 sdm add https://github.com/.../dash.json # Add dashboard from URL or local file
 
 # Pattern matching
-sdm rm -T ".*Performance.*"              # Remove matching dashboards
-sdm rm -T "Test.*|Dev.*"                 # Remove multiple patterns
+sdm rm -T "*Performance*"                # Remove matching dashboards
+sdm rm -T "Test*|Dev*"                  # Remove multiple patterns
 ```
 
 ## License

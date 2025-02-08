@@ -66,7 +66,9 @@ class Commands:
             elif by_title:
                 for pattern in identifiers:
                     try:
-                        regex = re.compile(pattern, re.IGNORECASE)
+                        # Convert glob-style pattern to regex pattern
+                        regex_pattern = pattern.replace('*', '.*')
+                        regex = re.compile(regex_pattern, re.IGNORECASE)
                         matches = [
                             dashboard['uuid'] for dashboard in all_dashboards
                             if regex.search(dashboard.get('data', {}).get('title', ''))
@@ -76,7 +78,7 @@ class Commands:
                         else:
                             UI.print_warning(f"No dashboards found matching pattern: {pattern}")
                     except re.error as e:
-                        UI.print_error(f"Invalid regex pattern '{pattern}': {str(e)}")
+                        UI.print_error(f"Invalid pattern '{pattern}': {str(e)}")
                         if not force:
                             return
             else:
