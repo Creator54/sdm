@@ -205,6 +205,35 @@ class Commands:
             return []
 
     @staticmethod
+    def _parse_selection(selection: str, max_items: int) -> List[int]:
+        """Parse selection string into list of indices"""
+        indices = set()  # Use set to avoid duplicates
+        
+        # Split by comma first
+        for part in selection.split(','):
+            try:
+                if '-' in part:
+                    # Handle range (e.g., "5-10")
+                    start, end = map(int, part.strip().split('-'))
+                    if start < 1 or end > max_items or start > end:
+                        UI.print_error(f"Invalid range: {start}-{end}. Please use numbers between 1 and {max_items}")
+                        return []
+                    indices.update(range(start-1, end))
+                else:
+                    # Handle single number
+                    index = int(part.strip())
+                    if 0 < index <= max_items:
+                        indices.add(index-1)
+                    else:
+                        UI.print_error(f"Invalid selection: {index}. Please use numbers between 1 and {max_items}")
+                        return []
+            except ValueError:
+                UI.print_error(f"Invalid input: '{part}'. Please use numbers only")
+                return []
+        
+        return sorted(list(indices))
+
+    @staticmethod
     def _select_dashboards(dashboards: List[Dict], pattern: Optional[str] = None) -> List[Dict]:
         """Allow user to select dashboards interactively"""
         if not dashboards:
@@ -232,34 +261,11 @@ class Commands:
             return []
 
         try:
-            selected = []
-            # Handle range selection (e.g., "1-3")
-            if '-' in selection:
-                start, end = map(int, selection.split('-'))
-                if start < 1 or end > len(dashboards) or start > end:
-                    UI.print_error(f"Invalid range: {start}-{end}. Please use numbers between 1 and {len(dashboards)}")
-                    return []
-                selected = dashboards[start-1:end]
-            # Handle multiple selection (e.g., "1,3,5")
-            elif ',' in selection:
-                indices = [int(i)-1 for i in selection.split(',')]
-                invalid = [i+1 for i in indices if i < 0 or i >= len(dashboards)]
-                if invalid:
-                    UI.print_error(f"Invalid selection(s): {', '.join(map(str, invalid))}. Please use numbers between 1 and {len(dashboards)}")
-                    return []
-                selected = [dashboards[i] for i in indices]
-            # Handle single selection
-            else:
-                try:
-                    index = int(selection) - 1
-                    if 0 <= index < len(dashboards):
-                        selected = [dashboards[index]]
-                    else:
-                        UI.print_error(f"Invalid selection: {selection}. Please use a number between 1 and {len(dashboards)}")
-                        return []
-                except ValueError:
-                    UI.print_error(f"Invalid input: '{selection}'. Please enter numbers only")
-                    return []
+            indices = Commands._parse_selection(selection, len(dashboards))
+            if not indices:
+                return []
+            
+            selected = [dashboards[i] for i in indices]
             
             # Show selected dashboards before proceeding
             if selected:
@@ -267,9 +273,6 @@ class Commands:
                 for dash in selected:
                     UI.print_info(f"  - {dash['path']}")
             return selected
-        except ValueError:
-            UI.print_error("Invalid selection format. Please use numbers only")
-            return []
         except Exception as e:
             UI.print_error(f"Error processing selection: {str(e)}")
             return []
