@@ -14,18 +14,18 @@ cd sdm && pip install -e .
 If you have Nix with flakes enabled, you can run the tool directly:
 
 ```bash
-nix run github:creator54/sdm
+nix run --refresh github:creator54/sdm
 
 # Or from local checkout
-nix run .#
+nix run --refresh .#
 ```
 
 To install into your environment:
 ```bash
-nix profile install github:creator54/sdm
+nix profile install --refresh github:creator54/sdm
 
 # Or from local checkout
-nix profile install .#
+nix profile install --refresh .#
 ```
 
 ## Configure
