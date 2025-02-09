@@ -73,6 +73,7 @@ class UI:
         config_table.add_column("Value", style="green")
 
         config_table.add_row("Email", config.get('email', 'Not set'))
+        config_table.add_row("API URL", config.get('api_url', 'Not set'))
         config_table.add_row("Last Login", config.get('last_login', 'Never'))
         config_table.add_row("Token", f"{config.get('token', 'Not set')[:20]}... (truncated)")
         config_table.add_row("Config Location", str(config.get('config_location', 'Unknown')))

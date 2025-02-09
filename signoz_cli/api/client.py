@@ -10,7 +10,17 @@ from ..config.auth import TokenManager
 
 class SignozAPI:
     def __init__(self, base_url: str = DEFAULT_API_URL, token: Optional[str] = None):
-        self.base_url = base_url.rstrip('/')
+        # Use provided URL, or load from config, or fallback to default
+        saved_url = TokenManager.load_api_url()
+        # Only use default if no URL is provided and none is saved
+        self.base_url = base_url if base_url != DEFAULT_API_URL else (saved_url or DEFAULT_API_URL)
+        self.base_url = self.base_url.rstrip('/')
+        
+        # Debug print to check URL being used
+        print(f"Debug: Using API URL: {self.base_url}")
+        print(f"Debug: Saved URL: {saved_url}")
+        print(f"Debug: Provided URL: {base_url}")
+        
         self.token = token or TokenManager.load_token()
         if self.token and not self._is_token_valid(self.token):
             self.token = None
@@ -57,7 +67,11 @@ class SignozAPI:
         if not email or not password:
             return False, "Email and password are required. Set them in .env file or provide via command line."
         
+        # Ensure we're using the provided URL, not the default
+        base_url = base_url if base_url != DEFAULT_API_URL else TokenManager.load_api_url() or DEFAULT_API_URL
         url = f"{base_url.rstrip('/')}{ENDPOINTS['login']}"
+        
+        print(f"Debug: Login URL: {url}")  # Debug print
         
         try:
             response = requests.post(
@@ -69,7 +83,8 @@ class SignozAPI:
             if response.status_code == 200:
                 data = response.json()
                 if 'accessJwt' in data:
-                    TokenManager.save_token(data['accessJwt'], email)
+                    # Save the actual URL used for login
+                    TokenManager.save_token(data['accessJwt'], email, base_url)
                     return True, data['accessJwt']
                 return False, "No access token in response"
             else:
